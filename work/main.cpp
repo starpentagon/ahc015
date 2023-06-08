@@ -4,7 +4,7 @@
 #include "XorShift.hpp"
 #include "Parameter.hpp"
 #include "BoxState.hpp"
-#include "SolveGreedy.hpp"
+#include "SolvePattern.hpp"
 
 using namespace std;
 
@@ -25,7 +25,7 @@ int main() {
    auto [candy_seq, candy_pos_list] = LoadProblem();
 
    BoxState box;
-   SolveGreedy solver(candy_seq);
+   SolvePattern solver(candy_seq);
    vector<Direction> answer_list;
 
    rep(turn, 100) {
