@@ -6,8 +6,6 @@
 #include "BoxState.hpp"
 #include "SolveOneDir.hpp"
 
-#include "debug.hpp"
-
 using namespace std;
 
 // clang-format off
@@ -37,12 +35,18 @@ int main() {
       box.AddCandy(candy, open_ind);
 
       auto dir = solver.Solve(box);
+      box.Tilt(dir);
+
+      if (turn == 3) {
+         box.Output();
+         return 0;
+      }
+
       SendAnswer(dir, answer_list);
    }
 
    cerr << "Result=" << GetAnswerStr(answer_list) << " ";
-   cerr << "Score=0"
-        << " ";
+   cerr << "Score=" << box.CalcScore(candy_seq) << " ";
    cerr << endl;
 
    return 0;

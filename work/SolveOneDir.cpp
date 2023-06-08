@@ -8,5 +8,5 @@ SolveOneDir::SolveOneDir(const CandySequence& candy_seq)
 
 Direction SolveOneDir::Solve(const BoxState& box) {
    box_ = box;
-   return kDirLeft;
+   return kDirDown;
 }
