@@ -6,12 +6,13 @@ CC = ccache g++
 CFLAGS = -Wall --std=c++17 -O2 -DLOCAL
 #CFLAGS = -pg -g -Wall --std=c++17 -O0
 
-ALL: main.o Parameter.o XorShift.o BoxState.o SolveOneDir.o
+ALL: main.o Parameter.o XorShift.o BoxState.o SolveOneDir.o SolveGreedy.o
 	$(CC) $(CFLAGS) -o main \
 	main.o \
 	XorShift.o \
 	Parameter.o \
 	SolveOneDir.o \
+	SolveGreedy.o \
 	BoxState.o
 	
 clean:

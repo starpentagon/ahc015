@@ -27,11 +27,13 @@ static constexpr Direction kDirRight = 2;
 static constexpr Direction kDirDown = 3;
 
 // Gridの移動方向の定義
+using Coord = std::pair<int, int>;
+
 static constexpr std::array<std::pair<long long, long long>, 4> dir_list = {
-    std::make_pair(-1, 0),  // 上
-    std::make_pair(1, 0),   // 下
     std::make_pair(0, -1),  // 左
+    std::make_pair(-1, 0),  // 上
     std::make_pair(0, 1),   // 右
+    std::make_pair(1, 0),   // 下
 };
 
 class BoxState {
@@ -42,18 +44,28 @@ class BoxState {
    void Tilt(Direction dir);
 
    // 指定の空き場所にキャンディを追加する
-   void AddCandy(CandyType candy, int open_index);
+   Coord AddCandy(CandyType candy, int open_index);
 
    // スコアを計算する
    long long CalcScore(const CandySequence& candy_seq) const;
 
    void Output() const;
 
+   // 指定した位置のキャンディと同一の連結成分の個数を返す
+   int GetSameCandyCCSize(const Coord& coord) const;
+
+   // 指定した位置から指定した方向にある最も近いキャンディの位置とキャンディを返す
+   std::pair<Coord, CandyType> GetCloseCandy(const Coord& coord, const Direction dir) const;
+
+   CandyType GetCandy(int ind) const;
+
+   CandyType GetCandy(const Coord& coord) const {
+      return GetCandy(GetIndex(coord.first, coord.second));
+   }
+
   protected:
    bool IsEmpty(int ind) const;
    bool InGrid(int h, int w) const;
-
-   CandyType GetCandy(int ind) const;
 
    void SetCandy(int ind, CandyType candy);
 

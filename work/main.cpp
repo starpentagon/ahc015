@@ -4,7 +4,7 @@
 #include "XorShift.hpp"
 #include "Parameter.hpp"
 #include "BoxState.hpp"
-#include "SolveOneDir.hpp"
+#include "SolveGreedy.hpp"
 
 using namespace std;
 
@@ -25,26 +25,22 @@ int main() {
    auto [candy_seq, candy_pos_list] = LoadProblem();
 
    BoxState box;
-   SolveOneDir solver(candy_seq);
+   SolveGreedy solver(candy_seq);
    vector<Direction> answer_list;
 
    rep(turn, 100) {
       auto open_ind = GetOpenInd(turn, candy_pos_list);
       auto candy = candy_seq[turn];
 
-      box.AddCandy(candy, open_ind);
+      auto candy_pos = box.AddCandy(candy, open_ind);
 
-      auto dir = solver.Solve(box);
+      auto dir = solver.Solve(candy_pos, box);
       box.Tilt(dir);
-
-      if (turn == 3) {
-         box.Output();
-         return 0;
-      }
 
       SendAnswer(dir, answer_list);
    }
 
+   cerr << endl;
    cerr << "Result=" << GetAnswerStr(answer_list) << " ";
    cerr << "Score=" << box.CalcScore(candy_seq) << " ";
    cerr << endl;
@@ -59,6 +55,7 @@ char GetDirStr(Direction dir) {
 
 void SendAnswer(Direction dir, vector<Direction>& answer_list) {
 #ifdef LOCAL
+   cout << GetDirStr(dir) << endl;
    answer_list.emplace_back(dir);
 #else
    cout << GetDirStr(dir) << endl;

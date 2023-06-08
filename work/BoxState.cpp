@@ -157,7 +157,7 @@ void BoxState::SetCandy(int ind, CandyType candy) {
    box_[ind] = candy;
 }
 
-void BoxState::AddCandy(CandyType candy, int open_index) {
+Coord BoxState::AddCandy(CandyType candy, int open_index) {
    int open_cnt = 0;
 
    rep(ind, kBoxSize) {
@@ -166,10 +166,13 @@ void BoxState::AddCandy(CandyType candy, int open_index) {
 
          if (open_cnt == open_index) {
             SetCandy(ind, candy);
-            return;
+            return GetPos(ind);
          }
       }
    }
+
+   assert(false);
+   return Coord(-1, -1);
 }
 
 void BoxState::Tilt(int dir) {
@@ -331,4 +334,66 @@ void BoxState::Output() const {
 
       cerr << endl;
    }
+}
+
+int BoxState::GetSameCandyCCSize(const Coord &coord) const {
+   int cc_size = 0;
+
+   auto ind = GetIndex(coord.first, coord.second);
+   auto candy = GetCandy(ind);
+   bitset<kBoxSize> visited;
+
+   queue<int> que;
+   que.emplace(ind);
+
+   while (!que.empty()) {
+      auto c_ind = que.front();
+      que.pop();
+
+      if (visited[c_ind]) continue;
+      visited[c_ind] = true;
+      cc_size++;
+
+      auto [h, w] = GetPos(c_ind);
+
+      for (auto [dh, dw] : dir_list) {
+         int nh = h + dh;
+         int nw = w + dw;
+
+         if (!InGrid(nh, nw)) continue;
+
+         auto n_ind = GetIndex(nh, nw);
+         if (visited[n_ind]) continue;
+         if (GetCandy(n_ind) != candy) continue;
+
+         que.emplace(n_ind);
+      }
+   }
+
+   return cc_size;
+}
+
+pair<Coord, CandyType> BoxState::GetCloseCandy(const Coord &coord, const Direction dir) const {
+   auto [h, w] = coord;
+   auto [dh, dw] = dir_list[dir];
+
+   for (int d = 1; d <= max(H, W); d++) {
+      int nh = h + dh * d;
+      int nw = w + dw * d;
+
+      if (!InGrid(nh, nw)) {
+         // 盤外
+         return {Coord(h + dh * (d - 1), w + dw * (d - 1)), kFruitEmpty};
+      }
+
+      auto ind = GetIndex(nh, nw);
+      auto candy = GetCandy(ind);
+
+      if (candy != kFruitEmpty) {
+         return {Coord(nh, nw), kFruitEmpty};
+      }
+   }
+
+   assert(false);
+   return {Coord(-1, -1), kFruitEmpty};
 }
